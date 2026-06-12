@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from lib.kmeans import KMeansModel
 from lib.plots import KMeansPlotter
-from lib.api.state import pipeline
+from lib.api.state import pipeline, config
 
 kmeans_bp = Blueprint("kmeans", __name__, url_prefix="/kmeans")
 
@@ -42,18 +42,16 @@ def search():
     km = pipeline["km"] or KMeansModel()
     pipeline["km"] = km
 
-    metric = body.get("metric", "euclidean")
-    X_in = pipeline["X_clean"] if metric == "gower" else pipeline["X_scaled"]
-    if X_in is None:
+    if pipeline["X_scaled"] is None:
         return jsonify({"error": "Dati non disponibili"}), 400
 
+    cfg = config["kmeans"]
     results = km.search(
-        X_in,
-        k_min=body.get("k_min", 2),
-        k_max=body.get("k_max", 10),
-        random_state=body.get("random_state", 42),
-        n_init=body.get("n_init", 10),
-        metric=metric,
+        pipeline["X_scaled"],
+        k_min=body.get("k_min", cfg["k_min"]),
+        k_max=body.get("k_max", cfg["k_max"]),
+        random_state=body.get("random_state", cfg["random_state"]),
+        n_init=body.get("n_init", cfg["n_init"]),
     )
     pipeline["search_results"] = results
     best_k = km.best_k_by_silhouette(results)
@@ -105,25 +103,19 @@ def fit():
     else:
         return jsonify({"error": "Specificare k oppure eseguire prima POST /kmeans/search"}), 400
 
-    metric = body.get("metric", km.metric if km.metric else "euclidean")
-    X_in = pipeline["X_clean"] if metric == "gower" else pipeline["X_scaled"]
-    if X_in is None:
-        return jsonify({"error": "Dati non disponibili"}), 400
-
+    cfg = config["kmeans"]
     km.fit(
-        X_in,
+        pipeline["X_scaled"],
         k,
-        random_state=body.get("random_state", 42),
-        n_init=body.get("n_init", 10),
-        metric=metric,
+        random_state=body.get("random_state", cfg["random_state"]),
+        n_init=body.get("n_init", cfg["n_init"]),
     )
 
     return jsonify({
         "status": "ok",
         "k": k,
-        "metric": metric,
         "inertia": km.inertia(),
-        "silhouette": km.silhouette(X_in),
+        "silhouette": km.silhouette(pipeline["X_scaled"]),
         "cluster_sizes": km.cluster_sizes(),
     })
 
