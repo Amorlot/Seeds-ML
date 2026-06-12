@@ -33,6 +33,7 @@ def main():
         target_col=cfg["loader"]["target_col"],
         dataset_id=cfg["loader"].get("dataset_id"),
         csv_path=cfg["loader"].get("csv_path"),
+        col_names=cfg["loader"].get("col_names"),
     )
     loader.load()
     info = loader.info()
@@ -114,15 +115,12 @@ def main():
     km_cfg = cfg["kmeans"]
     km = KMeansModel()
     plotter = KMeansPlotter()
-    metric = km_cfg.get("metric", "euclidean")
-    X_cluster = X_clean if metric == "gower" else X_scaled
     search_results = km.search(
-        X_cluster,
+        X_scaled,
         k_min=km_cfg["k_min"],
         k_max=km_cfg["k_max"],
         random_state=km_cfg["random_state"],
         n_init=km_cfg["n_init"],
-        metric=metric,
     )
 
     print(f"  {'k':>4}  {'Inertia':>12}  {'Silhouette':>12}")
@@ -137,17 +135,16 @@ def main():
     print(f"  [plot] {plot_path}")
 
     # ── CLUSTERING FIT ───────────────────────────────────────────
-    section(f"CLUSTERING FIT  (k={best_k}, metric={metric})")
+    section(f"CLUSTERING FIT  (k={best_k})")
     km.fit(
-        X_cluster,
+        X_scaled,
         best_k,
         random_state=km_cfg["random_state"],
         n_init=km_cfg["n_init"],
-        metric=metric,
     )
     sizes = km.cluster_sizes()
     print(f"  Inertia:    {km.inertia():.4f}")
-    print(f"  Silhouette: {km.silhouette(X_cluster):.4f}")
+    print(f"  Silhouette: {km.silhouette(X_scaled):.4f}")
     print(f"  Dimensioni cluster:")
     for c, n in sizes.items():
         pct = n / len(X_scaled) * 100
@@ -178,7 +175,8 @@ def main():
 
     # ── RIEPILOGO ────────────────────────────────────────────────
     section("RIEPILOGO FINALE")
-    print(f"  Dataset:      UCI Seeds (id=236) — {X_scaled.shape[0]} campioni, {X_scaled.shape[1]} feature")
+    src = cfg["loader"].get("csv_path") or f"UCI id={cfg['loader'].get('dataset_id')}"
+    print(f"  Dataset:      {src} — {X_scaled.shape[0]} campioni, {X_scaled.shape[1]} feature")
     print(f"  Scaling:      {cfg['encoder']['num_strategy']}")
     print(f"  k ricercato:  {km_cfg['k_min']}..{km_cfg['k_max']}")
     print(f"  Miglior k:    {best_k}")
