@@ -6,3 +6,4 @@ output/*.csv
 .env
 .claude/
 *.pptx
+generate_presentation.py
