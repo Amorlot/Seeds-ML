@@ -26,6 +26,8 @@ def load():
         target_col=body["target_col"],
         dataset_id=body.get("dataset_id"),
         csv_path=body.get("csv_path"),
+        col_names=body.get("col_names"),
+        sep=body.get("sep"),
     )
     loader.load()
 

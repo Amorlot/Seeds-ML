@@ -4,6 +4,7 @@ from lib.api.eda import eda_bp
 from lib.api.cleaner import cleaner_bp
 from lib.api.encoder import encoder_bp
 from lib.api.kmeans import kmeans_bp
+from lib.api.plots import plots_bp
 
 app = Flask(__name__)
 app.register_blueprint(loader_bp)
@@ -11,6 +12,7 @@ app.register_blueprint(eda_bp)
 app.register_blueprint(cleaner_bp)
 app.register_blueprint(encoder_bp)
 app.register_blueprint(kmeans_bp)
+app.register_blueprint(plots_bp)
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5001)
+    app.run(host="0.0.0.0", debug=True, port=5001)

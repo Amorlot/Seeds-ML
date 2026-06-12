@@ -1,6 +1,7 @@
 loader:
-  dataset_id: 236          # UCI Seeds dataset
+  csv_path: data/seeds_dataset.txt
   target_col: Class        # mantenuto solo per confronto — NON usato nel clustering
+  col_names: [area, perimeter, compactness, kernel_length, kernel_width, asymmetry_coef, groove_length, Class]
 
 cleaner:
   num_strategy: median     # median | mean | most_frequent

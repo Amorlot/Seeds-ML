@@ -17,6 +17,8 @@ class GenericLoader:
         csv_path: str = None,
         drop_cols: list = None,
         drop_missing_thresh: float = None,
+        sep: str = None,
+        col_names: list = None,
     ):
         if dataset_id is None and csv_path is None:
             raise ValueError("Specificare dataset_id oppure csv_path.")
@@ -26,6 +28,8 @@ class GenericLoader:
         self.csv_path = csv_path
         self.drop_cols = drop_cols or []
         self.drop_missing_thresh = drop_missing_thresh
+        self.sep = sep
+        self.col_names = col_names
 
         self.df = None
 
@@ -38,7 +42,14 @@ class GenericLoader:
                 dataset.data.targets.copy(),
             ], axis=1)
         else:
-            self.df = pd.read_csv(self.csv_path)
+            sep = self.sep or (r'\s+' if self.csv_path.endswith('.txt') else ',')
+            self.df = pd.read_csv(
+                self.csv_path,
+                sep=sep,
+                engine='python',
+                names=self.col_names if self.col_names else None,
+                header=None if self.col_names else 0,
+            )
 
         self.df.replace(to_replace=_MISSING_MARKERS, value=np.nan, regex=True, inplace=True)
 
