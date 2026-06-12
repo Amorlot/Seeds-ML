@@ -1,0 +1,21 @@
+loader:
+  dataset_id: 236          # UCI Seeds dataset
+  target_col: Class        # mantenuto solo per confronto — NON usato nel clustering
+
+cleaner:
+  num_strategy: median     # median | mean | most_frequent
+  cat_strategy: unknown
+
+encoder:
+  num_strategy: standard   # standard (StandardScaler) | minmax | none
+
+kmeans:
+  k_min: 2
+  k_max: 10
+  best_k: null             # null = auto-selezione via silhouette massima
+  random_state: 42
+  n_init: 10
+  metric: euclidean        # euclidean | manhattan | cosine | gower | hamming
+
+output:
+  plots_dir: output/
