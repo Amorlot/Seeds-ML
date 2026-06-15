@@ -40,20 +40,34 @@ Seeds-ML/
 
 ## Avvio rapido
 
-### Pipeline batch (via Docker)
+### Opzione 1 — Pull da Docker Hub (consigliato)
+
+Nessun clone del repository necessario. Basta avere Docker installato.
 
 ```bash
-docker build -t seeds-ml .
-docker run -v $(pwd)/output:/app/output seeds-ml
+# Pipeline batch: esegue tutto e salva i grafici in ./output
+docker run --rm -v $(pwd)/output:/app/output amorlot/seeds-ml:latest
+
+# REST API
+docker run --rm -p 5001:5001 -v $(pwd)/output:/app/output amorlot/seeds-ml:latest python app.py
 ```
 
-Esegue l'intera pipeline e salva i grafici in `output/`.
+I grafici PNG vengono salvati nella cartella `output/` della directory corrente.
 
-### REST API (via Docker)
+### Opzione 2 — Build da sorgente
+
+```bash
+git clone <repo-url>
+cd Seeds-ML
+docker build -t seeds-ml .
+docker run --rm -v $(pwd)/output:/app/output seeds-ml
+```
+
+### REST API (da sorgente)
 
 ```bash
 # Avvia il server Flask
-docker run -p 5001:5001 -v $(pwd)/output:/app/output seeds-ml python app.py
+docker run --rm -p 5001:5001 -v $(pwd)/output:/app/output seeds-ml python app.py
 
 # In un altro terminale, esegui la pipeline via HTTP
 python run_pipeline.py

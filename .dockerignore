@@ -1,0 +1,23 @@
+# Cache Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Output generati (il container li produce da zero)
+output/*.png
+output/*.csv
+output/*.pptx
+
+# Presentazioni e script locali
+*.pptx
+generate_presentation.py
+
+# Git e editor
+.git/
+.gitignore
+.claude/
+
+# README (non serve nel container)
+README.md
+
+# Il dataset data/ è incluso (serve per la pipeline)

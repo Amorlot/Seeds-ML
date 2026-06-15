@@ -101,6 +101,8 @@ def fit():
 
     if "k" in body:
         k = int(body["k"])
+    elif config["kmeans"].get("best_k"):
+        k = int(config["kmeans"]["best_k"])
     elif pipeline["search_results"]:
         k = km.best_k_by_silhouette(pipeline["search_results"])
     else:
