@@ -16,7 +16,6 @@ kmeans:
   best_k: 3                # forzato: 3 varietà biologiche note
   random_state: 42
   n_init: 10
-  metric: euclidean        # euclidean | manhattan | cosine | gower | hamming
 
 output:
   plots_dir: output/

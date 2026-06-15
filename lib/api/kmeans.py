@@ -5,8 +5,11 @@ from lib.api.state import pipeline, config
 
 kmeans_bp = Blueprint("kmeans", __name__, url_prefix="/kmeans")
 
-_PLOTS_DIR = "output/"
 _plotter = KMeansPlotter()
+
+
+def _plots_dir() -> str:
+    return config["output"]["plots_dir"]
 
 
 def _require_scaled():
@@ -161,7 +164,7 @@ def plot_elbow():
     """Genera e salva il grafico elbow + silhouette."""
     if pipeline["search_results"] is None:
         return jsonify({"error": "Chiamare prima POST /kmeans/search"}), 400
-    path = _plotter.elbow_silhouette(pipeline["search_results"], _PLOTS_DIR)
+    path = _plotter.elbow_silhouette(pipeline["search_results"], _plots_dir())
     return jsonify({"status": "ok", "path": path})
 
 
@@ -177,7 +180,7 @@ def plot_pca2d():
         km.labels_,
         km.k,
         y_true=pipeline["y"],
-        save_dir=_PLOTS_DIR,
+        save_dir=_plots_dir(),
     )
     return jsonify({"status": "ok", "path": path})
 
@@ -191,7 +194,7 @@ def plot_profiles():
     if pipeline["X_clean"] is None:
         return jsonify({"error": "X_clean non disponibile"}), 400
     prof = pipeline["km"].cluster_profiles(pipeline["X_clean"])
-    path = _plotter.profiles(prof, _PLOTS_DIR)
+    path = _plotter.profiles(prof, _plots_dir())
     return jsonify({"status": "ok", "path": path})
 
 
@@ -203,5 +206,5 @@ def plot_pairplot():
         return err
     if pipeline["X_clean"] is None:
         return jsonify({"error": "X_clean non disponibile"}), 400
-    path = _plotter.pairplot(pipeline["X_clean"], pipeline["km"].labels_, _PLOTS_DIR)
+    path = _plotter.pairplot(pipeline["X_clean"], pipeline["km"].labels_, _plots_dir())
     return jsonify({"status": "ok", "path": path})

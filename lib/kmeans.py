@@ -36,7 +36,7 @@ class KMeansModel:
         """Calcola inertia e silhouette per ogni k in [k_min, k_max]."""
         results = {}
         for k in range(k_min, k_max + 1):
-            km = KMeans(n_clusters=k, random_state=random_state, n_init=n_init)
+            km = KMeans(n_clusters=k, init="k-means++", random_state=random_state, n_init=n_init)
             labels = km.fit_predict(X)
             sil = float(silhouette_score(X, labels))
             results[k] = {"inertia": float(km.inertia_), "silhouette": sil}
@@ -55,7 +55,7 @@ class KMeansModel:
         n_init: int = 10,
     ) -> "KMeansModel":
         self.k = k
-        self.model = KMeans(n_clusters=k, random_state=random_state, n_init=n_init)
+        self.model = KMeans(n_clusters=k, init="k-means++", random_state=random_state, n_init=n_init)
         self.labels_ = self.model.fit_predict(X)
         return self
 

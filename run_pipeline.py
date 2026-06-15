@@ -29,6 +29,16 @@ for path, body in steps:
         print(r.text)
         sys.exit(1)
 
+r = requests.get(BASE + "/kmeans/compare")
+if r.ok:
+    m = r.json()
+    print(f"\nMetriche clustering:")
+    print(f"  ARI:    {m['ari']}")
+    print(f"  NMI:    {m['nmi']}")
+    print(f"  Purity: {m['purity']}")
+else:
+    print("ERRORE /kmeans/compare:", r.text)
+
 print("\nVisualizza i grafici nel browser:")
 for p in requests.get(BASE + "/plots/").json():
     print(f"  {BASE}/plots/{p}")
